@@ -1,0 +1,70 @@
+﻿@using VueJsAspNetMVC.Models
+@model Employee
+@{
+    ViewBag.Title = Model.ID == 0 ? "Add" : "Edit - " + Model.Name;
+}
+<style type="text/css">
+    label {
+        display: inline-block;
+        width: 65px;
+    }
+
+    input {
+        margin-bottom: 3px;
+    }
+</style>
+<div style="display: inline-block;">
+    <form id="app" @@submit.prevent="submitForm">
+        @Html.LabelFor(x => x.Name)
+        @Html.VueTextBoxFor(x => x.Name)
+        <br />
+        @Html.LabelFor(x => x.PhoneNo)
+        @Html.VueTextBoxFor(x => x.PhoneNo)
+        <br />
+        @Html.LabelFor(x => x.Email)
+        @Html.VueTextBoxFor(x => x.Email)
+        <br />
+        @Html.LabelFor(x => x.Address)
+        @Html.VueTextBoxFor(x => x.Address)
+        <br /><br />
+        <div style="text-align:right;">
+            <input type="submit" value="Save" />
+            <input type="reset" value="Reset" />
+        </div>
+    </form>
+</div>
+@section scripts{
+    @{
+        var jsonObject = Html.Raw(Json.Encode(Model));
+    }
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                input: @(jsonObject)
+                },
+            methods: {
+                validateForm: function(){
+                    if(!this.input.Name){
+                        alert("Name is required.")
+                        return false;
+                    }
+                    return true;
+                },
+                submitForm: function(){
+                    if(!this.validateForm())
+                        return;
+
+                    var self = this;
+                    $.post("/Employee/Save", this.input, function(res){
+                        self.input = res;
+                        alert("Saved")
+                    });
+                },
+                reset: function(){
+                    this.input = @(jsonObject);
+                }
+            }
+        });
+    </script>
+}

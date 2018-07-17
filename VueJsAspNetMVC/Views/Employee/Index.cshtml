@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Employees";
+}
+
+<div id="app">
+    <a href="/Employee/Edit">Add Employee</a>
+    <br /><br />
+    <table border="1">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Phone No</th>
+            <th>Email</th>
+            <th>Address</th>
+        </tr>
+        <tr v-for="item in Items">
+            <td><a v-bind:href="'/Employee/Edit/' + item.ID" target="_blank">Edit</a></td>
+            <td>{{ item.Name }}</td>
+            <td>{{ item.PhoneNo }}</td>
+            <td>{{ item.Email }}</td>
+            <td>{{ item.Address }}</td>
+        </tr>
+    </table>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                Items: []
+            },
+            created: function () {
+                var self = this;
+                $.post('/Employee/Get', function (res) {
+                    self.Items = res;
+                });
+            }
+        });
+    </script>
+}
