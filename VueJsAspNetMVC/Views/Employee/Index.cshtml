@@ -1,11 +1,19 @@
 ﻿@{
     ViewBag.Title = "Employees";
 }
-
+<style type="text/css">
+    table {
+        border-collapse: collapse;
+    }
+    td,th{
+        border:1px solid #ccc;
+        padding: 5px;
+    }
+</style>
 <div id="app">
     <a href="/Employee/Edit">Add Employee</a>
     <br /><br />
-    <table border="1">
+    <table>
         <tr>
             <th></th>
             <th>Name</th>
