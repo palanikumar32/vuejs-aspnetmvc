@@ -1,0 +1,50 @@
+﻿.v-radio, .v-radio-label, .v-checkbox, .v-checkbox-label {
+    margin-right: 5px;
+}
+/****************** Vue Select ******************************/
+.v-select {
+    min-width: 100px;
+}
+
+    .v-select .dropdown-toggle {
+        border-radius: 0 !important;
+        border: 1px solid #DFDFDF !important;
+    }
+
+        .v-select .dropdown-toggle .clear {
+            font-size: 19px !important;
+        }
+
+    .v-select .open-indicator::before {
+        border-width: 2px 2px 0 0 !important;
+    }
+
+    .v-select input[type="search"], .v-select input[type="search"]:focus {
+        height: 29px !important;
+    }
+
+    .v-select input.form-control {
+        width: 0 !important;
+    }
+/****************** Vue Select - End ******************************/
+/****************** Vue DatePicker ******************************/
+.vdp-datepicker {
+    display: inline-block;
+    width: 150px;
+}
+
+    .vdp-datepicker input {
+        width: 100%;
+    }
+
+    .vdp-datepicker::after {
+        content: "\f274";
+        position: relative;
+        top: -30px;
+        right: 6px;
+        height: 0;
+        font-family: 'FontAwesome';
+        float: right;
+        pointer-events: none;
+    }
+/****************** Vue DatePicker - End ******************************/

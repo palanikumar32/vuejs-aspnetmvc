@@ -1,49 +1,215 @@
-﻿@{
-    ViewBag.Title = "Employees";
+﻿@using VueJsAspNetMVC.Models
+@model Employee
+@{
+    Layout = null;
 }
-<style type="text/css">
-    table {
-        border-collapse: collapse;
-    }
-    td,th{
-        border:1px solid #ccc;
-        padding: 5px;
-    }
-</style>
-<div id="app">
-    <a href="/Employee/Edit">Add Employee</a>
-    <br /><br />
-    <table>
-        <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Phone No</th>
-            <th>Email</th>
-            <th>Address</th>
-        </tr>
-        <tr v-for="item in Items">
-            <td><a v-bind:href="'/Employee/Edit/' + item.ID" target="_blank">Edit</a></td>
-            <td>{{ item.Name }}</td>
-            <td>{{ item.PhoneNo }}</td>
-            <td>{{ item.Email }}</td>
-            <td>{{ item.Address }}</td>
-        </tr>
-    </table>
-</div>
 
-@section scripts{
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>VueJs with Asp.Net MVC</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/VueHelper.css" rel="stylesheet" />
+
+    <script src="~/Scripts/vue.min.js"></script>
+    <script src="~/Scripts/VueHelper/vue-select.js"></script>
+    <script src="~/Scripts/VueHelper/accounting.umd.js"></script>
+    <script src="~/Scripts/VueHelper/vue-numeric.min.js"></script>
+    <script src="~/Scripts/VueHelper/vuejs-datepicker.min.js"></script>
+    <style type="text/css">
+        .components {
+            display: inline-block;
+            padding: 10px;
+        }
+
+        input[type=text], input[type=tel], input[type=email], textarea {
+            margin-bottom: 3px;
+            width: 100%;
+            border: 1px solid #CCC;
+            padding: 3px;
+        }
+
+        .vdp-datepicker {
+            width: 100%;
+        }
+
+        button {
+            padding: 5px 20px;
+            border: 0;
+            color: white;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td, th {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="row">
+            <div class="col-md-6">
+                <form @@submit.prevent="submitForm">
+                    <div class="components">
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.Name)
+                                @Html.Vue().TextBoxFor(x => x.Name).PlaceHolder("Name").OnChange("NameChange")
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.PhoneNo, "Phone No")
+                                @Html.Vue().TextBoxFor(x => x.PhoneNo).InputType(VueHelper.InputType.Tel)
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.Gender)<br />
+                                @Html.Vue().RadioButtonFor(x => x.Gender).Items("Male", "Female").OnChange("GenderChange")
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.Level)
+                                @Html.Vue().ComboBoxFor(x => x.Level).Items("Level 1", "Level 2")
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.Email)
+                                @Html.Vue().TextBoxFor(x => x.Email).InputType(VueHelper.InputType.Email)
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.DOJ)
+                                @Html.Vue().DatePickerFor(x => x.DOJ)
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.Country)
+                                @Html.Vue().ComboBoxFor(x => x.Country).ValueMember("CountryID").TextField("Country").OnChange("CountryChange")
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.State)
+                                @Html.Vue().ComboBoxFor(x => x.State)
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(x => x.Salary)
+                                @Html.Vue().NumericFor(x => x.Salary).Precision(2)
+                            </div>
+                            <div class="col-md-6">
+                                <br /><br />
+                                @Html.Vue().CheckBoxFor(x => x.IsActive).Label("Active").OnChange("IsActiveChange")
+                            </div>
+                        </div>
+
+                        @Html.LabelFor(x => x.Address)
+                        @Html.Vue().TextAreaFor(x => x.Address)
+                        <br /><br />
+                        <div style="text-align:right;">
+                            <button type="submit" style="background-color: #2A80B9">Save</button>
+                            <button type="reset" style="background-color: #BF3A2B" @@click="reset">Reset</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Phone No</th>
+                        <th>Email</th>
+                        <th>Country</th>
+                        <th>DOJ</th>
+                    </tr>
+                    <tr v-for="item in Items">
+                        <td><a v-bind:href="'javascript:app.editItem(' + item.ID + ')'">Edit</a></td>
+                        <td>{{ item.Name }}</td>
+                        <td>{{ item.PhoneNo }}</td>
+                        <td>{{ item.Email }}</td>
+                        <td>{{ item.Country }}</td>
+                        <td>{{ JDate(item.DOJ) }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    @{
+        var jsonObject = Vue.Encode(new Employee() { Gender = "Male", DOJ = DateTime.Now });
+    }
+    <script src="~/Scripts/jquery-3.0.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/VueHelper/VueHelper.js"></script>
     <script type="text/javascript">
         var app = new Vue({
             el: '#app',
             data: {
-                Items: []
+                input: @(jsonObject),
+                Items: [],
+                CountryList: [],
+                StateList: []
             },
             created: function () {
                 var self = this;
-                $.post('/Employee/Get', function (res) {
-                    self.Items = res;
-                });
+                $.post('/Employee/ReadCountries', function (res) { self.CountryList = res; });
+                this.read();
+            },
+            methods: {
+                CountryChange: function(){
+                    var self = this;
+                    $.post('/Employee/ReadStates', {Country: self.input.Country}, function (res) { self.StateList = res; });
+                },
+                validateForm: function(){
+                    if(!this.input.Name){
+                        alert("Name is required.")
+                        return false;
+                    }
+                    return true;
+                },
+                submitForm: function(){
+                    if(!this.validateForm())
+                        return;
+
+                    var self = this;
+                    $.postData("/Employee/Save", this.input, function(res){
+                        self.input = res;
+                        alert("Saved");
+                        self.reset();
+                        self.read();
+                    });
+                },
+                reset: function () {
+                    this.input = @(jsonObject);
+                },
+                read: function(){
+                    var self = this;
+                    $.post('/Employee/GetAll', function (res) { self.Items = res; });
+                },
+                editItem: function(id){
+                    var self = this;
+                    $.postData('/Employee/Get', { ID: id }, function (res) { self.input = res; });
+                },
+                GenderChange: function (e) {
+                    console.log("RadioButton Change: ", this.input.Gender);
+                },
+                NameChange: function () {
+                    console.log("TextBox Change: ", this.input.Name);
+                },
+                IsActiveChange: function() {
+                    console.log("CheckBox Change: ", this.input.IsActive);
+                }
             }
         });
     </script>
-}
+</body>
+</html>

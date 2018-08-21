@@ -14,19 +14,29 @@ namespace VueJsAspNetMVC.Controllers
             return View();
         }
 
-        public JsonResult Get()
+        public ActionResult GetAll()
         {
             List<Employee> employees = DB.Employees;
             return Json(employees);
         }
 
-        public ActionResult Edit(int ID = 0)
+        public ActionResult Get(int ID = 0)
         {
             Employee employee = ID > 0 ? new Employee().Get(ID) : new Employee();
-            return View(employee);
+            return Json(employee);
         }
 
-        public JsonResult Save(Employee Item)
+        public JsonResult ReadCountries()
+        {
+            return Json(new Countries().Get());
+        }
+
+        public ActionResult ReadStates(string Country)//TODO: Filter by country
+        {
+            return Json(Enumerable.Range(0, 50).Select(x => "State " + x.ToString()));
+        }
+
+        public ActionResult Save(Employee Item)
         {
             Item.Save();
             return Json(Item);
